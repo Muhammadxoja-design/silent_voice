@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Silent Voice{% endblock %}</title>
+  <link rel="manifest" href="{{ url_for('main.manifest') }}">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="background-color" content="#0f172a">
+  <link rel="icon" type="image/svg+xml" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192.svg') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.svg') }}">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='twa3') }}">
+  <script defer src="{{ url_for('static', filename='js/app.js', v='twa3') }}"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="{{ url_for('main.index') }}">Silent Voice</a>
+      <nav class="nav">
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('main.learning_center') }}">Learning</a>
+          <a href="{{ url_for('main.live_camera') }}">Camera</a>
+          <a href="{{ url_for('main.profile') }}">Profile</a>
+          {% if current_user.is_admin %}<a href="{{ url_for('admin.dashboard') }}">Admin</a>{% endif %}
+          <a href="{{ url_for('auth.logout') }}">Logout</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">Login</a>
+          <a href="{{ url_for('auth.register') }}" class="btn btn-primary small">Get started</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page-space">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <p>Demo product for accessible sign communication.</p>
+      <p>TWA-ready · PWA-ready · Flask + SQLite</p>
+    </div>
+  </footer>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('{{ url_for("main.service_worker") }}?v=twa6')
+          .catch(function (error) {
+            console.error('Service worker registration failed:', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>

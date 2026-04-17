@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero card hero-grid">
+  <div>
+    <span class="pill">AI Sign Language Demo</span>
+    <h1>Bridge gesture, text, and voice in one mobile-first product.</h1>
+    <p class="muted">Silent Voice is a demo platform for deaf and hard-of-hearing accessibility with live camera recognition, learning center, sign playback avatar, offline library, and admin analytics.</p>
+    <div class="hero-actions">
+      <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Create account</a>
+      <a href="{{ url_for('auth.login') }}" class="btn">Login</a>
+    </div>
+  </div>
+  <div class="mock-phone">
+    <div class="phone-screen">
+      <div class="camera-placeholder">📷 Live Camera</div>
+      <div class="result-box">Recognized: <strong>Hello</strong></div>
+      <div class="chips">
+        <span>Avatar</span><span>Offline</span><span>SOS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="grid three mt-24">
+  <article class="card"><h3>Real-time translator</h3><p class="muted">Demo live camera page with MediaPipe-ready gesture mapping and text-to-speech output.</p></article>
+  <article class="card"><h3>Learning center</h3><p class="muted">Structured sign library with categories like alphabet, medical, shop, and emergency.</p></article>
+  <article class="card"><h3>Admin operations</h3><p class="muted">User moderation, feedback review, sign management, and simple KPI monitoring.</p></article>
+</section>
+
+<section class="mt-24">
+  <div class="section-head"><h2>Featured demo signs</h2></div>
+  <div class="grid two">
+    {% for sign in featured %}
+    <article class="card sign-card"><h3>{{ sign.title }}</h3><p>{{ sign.meaning }}</p><small>{{ sign.category }}</small></article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

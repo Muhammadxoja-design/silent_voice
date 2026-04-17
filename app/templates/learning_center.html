@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section-head"><h1>Learning Center</h1></section>
+<div class="chips mt-16 wrap">
+  <a class="chip {% if not active_category %}active{% endif %}" href="{{ url_for('main.learning_center') }}">All</a>
+  {% for category in categories %}
+  <a class="chip {% if active_category == category %}active{% endif %}" href="{{ url_for('main.learning_center', category=category) }}">{{ category }}</a>
+  {% endfor %}
+</div>
+<div class="grid three mt-24">
+  {% for sign in signs %}
+  <article class="card sign-card">
+    <small>{{ sign.category }}</small>
+    <h3>{{ sign.title }}</h3>
+    <p>{{ sign.meaning }}</p>
+    <div class="muted">{{ sign.description }}</div>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

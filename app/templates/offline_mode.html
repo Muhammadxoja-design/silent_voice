@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card">
+  <h1>Offline Mode</h1>
+  <p class="muted">This demo ships with a local starter pack. Extend this list to the most-used 100 signs and cache related assets using the service worker.</p>
+  <div class="grid three mt-24">
+    {% for sign in offline_signs %}
+    <article class="card sign-card"><h3>{{ sign.title }}</h3><p>{{ sign.meaning }}</p><small>{{ sign.category }}</small></article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

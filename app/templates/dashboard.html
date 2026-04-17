@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="grid dashboard-grid">
+  <div class="card stat-card">
+    <h2>Hello, {{ current_user.name or current_user.username }}</h2>
+    <p class="muted">Daily sign recommendation and live access shortcuts.</p>
+    <div class="grid three compact">
+      <div><strong>{{ current_user.sign_count }}</strong><span>Signs learned</span></div>
+      <div><strong>{{ current_user.streak_days }}</strong><span>Streak</span></div>
+      <div><strong>{{ current_user.minutes_spent }}</strong><span>Minutes</span></div>
+    </div>
+    <div class="hero-actions mt-16">
+      <a class="btn btn-primary" href="{{ url_for('main.live_camera') }}">Open camera</a>
+      <a class="btn" href="{{ url_for('main.avatar') }}">Use avatar</a>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Sign of the day</h3>
+    {% if recommended %}
+      <div class="feature-lesson">
+        <strong>{{ recommended.title }}</strong>
+        <p>{{ recommended.meaning }}</p>
+        <small>{{ recommended.description }}</small>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="grid two mt-24">
+  <div class="card">
+    <h3>Translation history</h3>
+    {% if history_entries %}
+      <div class="table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Recognized text</th>
+              <th>Created at</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in history_entries %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ item.recognized_text }}</td>
+                <td>{{ item.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="muted">No translations saved yet. Open the camera page to start building your history.</p>
+    {% endif %}
+  </div>
+  <div class="card">
+    <h3>Notifications</h3>
+    <ul class="clean-list">
+      {% for item in notifications %}<li>{{ item }}</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="grid two mt-24">
+  <div class="card">
+    <h3>Quick feedback</h3>
+    <form method="post" action="{{ url_for('main.feedback') }}" class="form-grid">
+      <textarea name="message" rows="4" placeholder="Write your suggestion or issue..."></textarea>
+      <button class="btn btn-primary">Send feedback</button>
+    </form>
+  </div>
+</section>
+
+<section class="mt-24">
+  <div class="section-head"><h2>Popular signs</h2></div>
+  <div class="grid three">
+    {% for sign in signs %}
+      <article class="card sign-card"><h3>{{ sign.title }}</h3><p>{{ sign.meaning }}</p><small>{{ sign.category }}</small></article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

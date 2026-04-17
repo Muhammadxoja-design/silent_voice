@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="grid four admin-stats">
+  <div class="card"><strong>{{ stats.users }}</strong><span>Total users</span></div>
+  <div class="card"><strong>{{ stats.active_users }}</strong><span>Active users</span></div>
+  <div class="card"><strong>{{ stats.signs }}</strong><span>Signs</span></div>
+  <div class="card"><strong>{{ stats.feedback }}</strong><span>Feedback</span></div>
+</section>
+
+<section class="grid two mt-24">
+  <div class="card">
+    <h2>Add new sign</h2>
+    <form method="post" action="{{ url_for('admin.add_sign') }}" class="form-grid">
+      <input name="title" placeholder="Sign title" required>
+      <input name="category" placeholder="Category">
+      <input name="meaning" placeholder="Meaning" required>
+      <textarea name="description" rows="3" placeholder="Description"></textarea>
+      <button class="btn btn-primary">Add sign</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Feedback review</h2>
+    <ul class="clean-list scroll-list">
+      {% for item in feedback_entries %}
+      <li>
+        <strong>{{ item.user.name }}</strong> — {{ item.message }}
+        <br><small>Status: {{ item.status }}</small>
+        {% if item.status != 'reviewed' %}<br><a class="btn small" href="{{ url_for('admin.resolve_feedback', feedback_id=item.id) }}">Mark reviewed</a>{% endif %}
+      </li>
+      {% else %}<li>No feedback yet.</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section class="grid two mt-24">
+  <div class="card">
+    <h2>Users</h2>
+    <ul class="clean-list scroll-list">
+      {% for user in users %}
+      <li>
+        <strong>{{ user.name }}</strong> — {{ user.email }}
+        <br><small>{{ 'Blocked' if user.is_blocked else 'Active' }} | {{ 'Admin' if user.is_admin else 'User' }}</small>
+        <br><a class="btn small" href="{{ url_for('admin.toggle_block', user_id=user.id) }}">Toggle block</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="card">
+    <h2>Current signs</h2>
+    <ul class="clean-list scroll-list">
+      {% for sign in signs %}
+      <li><strong>{{ sign.title }}</strong> — {{ sign.meaning }}<br><small>{{ sign.category }}</small></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock %}

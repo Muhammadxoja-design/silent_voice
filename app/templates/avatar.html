@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block extra_head %}
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="{{ url_for('static', filename='js/avatar.js', v='twa6') }}"></script>
+{% endblock %}
+{% block content %}
+<section class="grid two">
+  <div class="card">
+    <h1>3D Avatar / Two-way Demo</h1>
+    <form id="avatarForm" method="post" class="form-grid">
+      <textarea id="avatarTextInput" name="text" rows="4" placeholder="Enter text to convert into sign steps...">{{ text_value }}</textarea>
+      <div class="inline-controls">
+        <label class="field-inline">
+          <span>Playback speed</span>
+          <select id="playbackSpeedSelect">
+            <option value="1">1.0x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+          </select>
+        </label>
+        <button id="avatarSubmitBtn" class="btn btn-primary" type="submit">Show in avatar</button>
+      </div>
+    </form>
+  </div>
+  <div class="card avatar-stage">
+    <div class="avatar-canvas-shell">
+      <div id="avatarPreview" class="avatar-preview-3d"></div>
+      <div class="avatar-overlay">
+        <span id="avatarModeBadge" class="avatar-badge">Idle</span>
+        <div class="avatar-caption">
+          <p class="avatar-caption-label">Now signing</p>
+          <strong id="avatarHeroText">Waiting...</strong>
+          <small id="avatarHeroMeta">Enter text to start the avatar.</small>
+        </div>
+      </div>
+    </div>
+    <p class="muted">The avatar now includes a live sign caption, audience hint, hand-by-hand coaching, and clearer body language so people can follow what it is doing.</p>
+    <div class="avatar-readout">
+      <div class="avatar-readout-card">
+        <span class="avatar-readout-label">Queue status</span>
+        <strong id="avatarStatus">Animation queue is idle.</strong>
+      </div>
+      <div class="avatar-readout-card">
+        <span class="avatar-readout-label">Current action</span>
+        <strong id="currentActionText">Current action: idle</strong>
+      </div>
+      <div class="avatar-readout-card">
+        <span class="avatar-readout-label">Progress</span>
+        <strong id="avatarProgressText">Step 0 of 0</strong>
+      </div>
+    </div>
+    <div class="avatar-coach-grid">
+      <div class="avatar-coach-card">
+        <span class="avatar-readout-label">Interpreted sign</span>
+        <strong id="avatarCoachTitle">Waiting...</strong>
+        <p id="avatarCoachSubtitle" class="muted">No sign is playing yet.</p>
+      </div>
+      <div class="avatar-coach-card">
+        <span class="avatar-readout-label">Audience hint</span>
+        <strong id="avatarAudienceHint">The caption and hand cues will update when playback starts.</strong>
+      </div>
+      <div class="avatar-coach-card">
+        <span class="avatar-readout-label">Left hand cue</span>
+        <strong id="avatarLeftHandCue">Idle</strong>
+      </div>
+      <div class="avatar-coach-card">
+        <span class="avatar-readout-label">Right hand cue</span>
+        <strong id="avatarRightHandCue">Idle</strong>
+      </div>
+    </div>
+    <div id="animationQueue" class="chips wrap mt-16">
+      {% if words %}
+        {% for word in words %}<span class="chip active">{{ word }}</span>{% endfor %}
+      {% endif %}
+    </div>
+    <pre id="animationLog" class="muted mt-16">Waiting for text input...</pre>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+{% endblock %}
+{% block content %}
+<section class="grid two camera-grid">
+  <div class="card">
+    <h1>AI Live Camera Demo</h1>
+    <p class="muted">This demo is MediaPipe-ready and maps 12 static gestures using lightweight heuristic logic. For production-grade Uzbek sign language, replace the recognizer with a trained model.</p>
+
+    <div id="cameraPermissionModal" class="camera-modal is-visible" role="dialog" aria-modal="true" aria-labelledby="cameraModalTitle">
+      <div class="camera-modal-card">
+        <h3 id="cameraModalTitle">Kameraga ruxsat bering</h3>
+        <p class="muted">Telegram Web App ichida imo-ishoralarni aniqlash uchun kameraga ruxsat kerak bo'ladi. Tugmani bosib ruxsat berishni boshlang.</p>
+        <div class="hero-actions mt-16">
+          <button id="cameraPermissionBtn" class="btn btn-primary" type="button">Kamerani yoqish</button>
+          <button id="cameraModalCloseBtn" class="btn" type="button">Demo rejimda qolish</button>
+        </div>
+      </div>
+    </div>
+
+    <video id="camera" class="camera-box" autoplay playsinline muted></video>
+    <canvas id="overlay" class="hidden"></canvas>
+    <div class="result-panel mt-16">
+      <div>Recognized: <strong id="recognizedText">Waiting...</strong></div>
+      <button id="speakBtn" class="btn btn-primary small" type="button">Speak</button>
+      <button id="vibrateBtn" class="btn small" type="button">Vibrate</button>
+      <button id="gpsBtn" class="btn small" type="button">Send SOS GPS</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Gesture mappings in this demo</h3>
+    <ul class="clean-list">
+      {% for sign in demo_signs %}
+      <li><strong>{{ sign.title }}</strong> - {{ sign.meaning }}</li>
+      {% endfor %}
+    </ul>
+    <div class="chips wrap mt-16">
+      {% for sign in demo_signs %}
+        <button class="chip camera-demo-btn" data-text="{{ sign.meaning }}">{{ sign.title }}</button>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<script src="{{ url_for('static', filename='js/live_camera.js') }}"></script>
+{% endblock %}

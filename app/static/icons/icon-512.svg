@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="SilentVoice icon">
+  <defs>
+    <linearGradient id="bg512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#bg512)"/>
+  <circle cx="256" cy="256" r="132" fill="rgba(255,255,255,0.12)"/>
+  <path d="M166 310c38 38 145 38 185-14 21-28 18-69-14-94-19-14-42-19-65-14-12-38-45-61-84-54-52 10-79 68-50 114 7 11 16 22 28 29z" fill="#f8fafc"/>
+  <path d="M219 181c16 0 29 13 29 29v48h48c16 0 29 13 29 29s-13 29-29 29h-77c-16 0-29-13-29-29v-77c0-16 13-29 29-29z" fill="#38bdf8"/>
+</svg>

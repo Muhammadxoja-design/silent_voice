@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="auth-shell card narrow">
+  <h1>Welcome back</h1>
+  <p class="muted">Email login is enabled in the demo. Google/social buttons are UI placeholders for later OAuth integration.</p>
+  <form method="post" class="form-grid">
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="password" type="password" placeholder="Password" required>
+    <button class="btn btn-primary" type="submit">Login</button>
+  </form>
+  <div class="oauth-grid mt-16">
+    <button class="btn" disabled>Google (next step)</button>
+    <button class="btn" disabled>Social login (next step)</button>
+  </div>
+</section>
+{% endblock %}

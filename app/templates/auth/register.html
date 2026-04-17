@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="auth-shell card narrow">
+  <h1>Create your account</h1>
+  <form method="post" class="form-grid">
+    <input name="name" placeholder="Full name" required>
+    <input name="email" type="email" placeholder="Email" required>
+    <select name="language">
+      <option value="UZB">UZB</option>
+      <option value="ENG">ENG</option>
+      <option value="RUS">RUS</option>
+    </select>
+    <input name="password" type="password" placeholder="Password" required>
+    <button class="btn btn-primary" type="submit">Register</button>
+  </form>
+</section>
+{% endblock %}
