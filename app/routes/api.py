@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from datetime import datetime, timedelta
 import urllib.error
 import urllib.request
 
@@ -119,12 +120,23 @@ def recognize_sign():
             if parts and parts[0].get('text'):
                 recognized_text = parts[0]['text'].strip()
 
-        if current_user.is_authenticated and recognized_text:
-            db.session.add(History(
-                user_id=current_user.id,
-                recognized_text=recognized_text,
-            ))
-            db.session.commit()
+        recognized_text = recognized_text.strip().strip('"').strip("'") or 'Aniqlanmadi'
+
+        if current_user.is_authenticated and recognized_text and recognized_text != 'Aniqlanmadi':
+            latest_entry = History.query.filter_by(user_id=current_user.id).order_by(History.created_at.desc()).first()
+            should_save = True
+
+            if latest_entry:
+                repeated_text = latest_entry.recognized_text.strip().lower() == recognized_text.lower()
+                recent_repeat = latest_entry.created_at >= datetime.utcnow() - timedelta(seconds=15)
+                should_save = not (repeated_text and recent_repeat)
+
+            if should_save:
+                db.session.add(History(
+                    user_id=current_user.id,
+                    recognized_text=recognized_text,
+                ))
+                db.session.commit()
 
         return jsonify({
             'text': recognized_text
