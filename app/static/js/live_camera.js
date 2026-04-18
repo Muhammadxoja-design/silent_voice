@@ -21,15 +21,17 @@
   let handsDetector = null;
   let lastHandSeenAt = 0;
   let consecutiveUnknownCount = 0;
+  let lastRenderedTranslation = '';
   const predictionBuffer = [];
-  const RECOGNITION_INTERVAL_MS = 2600;
+  const RECOGNITION_INTERVAL_MS = 1800;
   const MAX_PREDICTION_BUFFER = 4;
   let currentText = 'Waiting...';
 
-  function setRecognized(text) {
+  function setRecognized(text, { force = false } = {}) {
     currentText = text || 'Waiting...';
-    if (recognizedText) {
+    if (recognizedText && (force || currentText !== lastRenderedTranslation)) {
       recognizedText.textContent = currentText;
+      lastRenderedTranslation = currentText;
     }
   }
 
@@ -93,6 +95,7 @@
     isSendingFrame = false;
     consecutiveUnknownCount = 0;
     predictionBuffer.length = 0;
+    lastHandSeenAt = 0;
     if (cameraStream) {
       cameraStream.getTracks().forEach((track) => track.stop());
       cameraStream = null;
@@ -171,7 +174,6 @@
 
     const handVisible = await detectHandPresence();
     if (!handVisible) {
-      setRecognized("Qo'lingizni kamera markaziga yaqinroq ko'rsating.");
       isSendingFrame = false;
       return;
     }
@@ -183,7 +185,7 @@
     }
 
     try {
-      const response = await fetch('/api/recognize', {
+      const response = await fetch('/api/translate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -200,7 +202,7 @@
 
       if (!prediction || prediction === 'Aniqlanmadi') {
         consecutiveUnknownCount += 1;
-        if (consecutiveUnknownCount >= 2) {
+        if (consecutiveUnknownCount >= 3 && !lastRenderedTranslation) {
           setRecognized('Aniqlanmadi');
         }
         return;
@@ -223,7 +225,7 @@
 
   function startRecognitionLoop() {
     clearRecognitionLoop();
-    setRecognized("Kamera ishlayapti. Qo'lingizni ko'rsating...");
+    setRecognized("Kamera ishlayapti. Qo'lingizni ko'rsating...", { force: true });
     recognitionIntervalId = window.setInterval(() => {
       requestRecognition();
     }, RECOGNITION_INTERVAL_MS);
@@ -280,7 +282,7 @@
       }
 
       closeModal();
-      setRecognized("Kamera yoqildi. Qo'lingizni ko'rsating...");
+      setRecognized("Kamera yoqildi. Qo'lingizni ko'rsating...", { force: true });
 
       if (cameraEl) {
         const startLoop = () => startRecognitionLoop();

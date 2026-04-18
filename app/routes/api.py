@@ -1,9 +1,9 @@
-import json
+import base64
+import binascii
 import os
 import re
 from datetime import datetime, timedelta
-import urllib.error
-import urllib.request
+from pathlib import Path
 
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
@@ -11,6 +11,82 @@ from app import db
 from app.models import History, Sign, build_animation_sequence
 
 api_bp = Blueprint('api', __name__)
+
+GEMINI_SYSTEM_PROMPT = (
+    "You are an expert sign language interpreter. Analyze this frame showing a hand gesture. "
+    "Output ONLY the translated meaning in text. Do not add any conversational filler."
+)
+
+
+def _load_gemini_api_key():
+    api_key = os.getenv('GEMINI_API_KEY')
+    if api_key:
+        return api_key
+
+    env_path = Path(__file__).resolve().parents[2] / '.env'
+    if not env_path.exists():
+        return None
+
+    for raw_line in env_path.read_text(encoding='utf-8').splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        key, value = line.split('=', 1)
+        if key.strip() == 'GEMINI_API_KEY':
+            api_key = value.strip().strip('"').strip("'")
+            if api_key:
+                os.environ.setdefault('GEMINI_API_KEY', api_key)
+                return api_key
+
+    return None
+
+
+def _decode_image_payload(image_data):
+    mime_type = 'image/jpeg'
+    encoded = image_data
+
+    match = re.match(r'^data:(image/[a-zA-Z0-9.+-]+);base64,(.+)$', image_data)
+    if match:
+        mime_type = match.group(1)
+        encoded = match.group(2)
+
+    try:
+        image_bytes = base64.b64decode(encoded, validate=True)
+    except (binascii.Error, ValueError) as exc:
+        raise ValueError('Base64 rasm noto‘g‘ri formatda yuborilgan.') from exc
+
+    return mime_type, image_bytes
+
+
+def _translate_frame_with_gemini(image_bytes, mime_type):
+    api_key = _load_gemini_api_key()
+    if not api_key:
+        raise RuntimeError('GEMINI_API_KEY .env yoki environment ichida topilmadi.')
+
+    try:
+        from google import genai
+        from google.genai import types
+    except ImportError as exc:
+        raise RuntimeError("`google-genai` paketi o‘rnatilmagan. `pip install google-genai` qiling.") from exc
+
+    client = genai.Client(api_key=api_key)
+    image_part = types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
+
+    response = client.models.generate_content(
+        model=os.getenv('GEMINI_MODEL', 'gemini-2.5-flash'),
+        contents=[
+            'Translate the sign in this single frame.',
+            image_part,
+        ],
+        config=types.GenerateContentConfig(
+            system_instruction=GEMINI_SYSTEM_PROMPT,
+            temperature=0.1,
+            max_output_tokens=24,
+        ),
+    )
+
+    text = (response.text or '').strip().strip('"').strip("'")
+    return text or 'Aniqlanmadi'
 
 @api_bp.route('/health')
 def health():
@@ -39,6 +115,7 @@ def ai_translate():
         'note': 'Replace this endpoint with ChatGPT, Grok, or any future multimodal API integration.'
     })
 
+@api_bp.route('/translate', methods=['POST'])
 @api_bp.route('/recognize', methods=['POST'])
 def recognize_sign():
     payload = request.get_json(silent=True) or {}
@@ -53,74 +130,9 @@ def recognize_sign():
     if not image_data:
         return jsonify({'error': 'Base64 rasm yuborilmadi.'}), 400
 
-    gemini_api_key = os.getenv('GEMINI_API_KEY')
-    if not gemini_api_key:
-        return jsonify({'error': 'GEMINI_API_KEY topilmadi.'}), 500
-
-    mime_type = 'image/jpeg'
-    base64_data = image_data
-
-    match = re.match(r'^data:(image/[a-zA-Z0-9.+-]+);base64,(.+)$', image_data)
-    if match:
-        mime_type = match.group(1)
-        base64_data = match.group(2)
-
-    gemini_url = (
-        'https://generativelanguage.googleapis.com/v1beta/models/'
-        'gemini-1.5-pro:generateContent'
-    )
-
-    gemini_payload = {
-        'contents': [
-            {
-                'parts': [
-                    {
-                        'text': (
-                            "Siz imo-ishora tilini tahlil qiluvchi yordamchisiz. "
-                            "Rasmda ko'rsatilgan asosiy imo-ishorani aniqlang va "
-                            "faqat bitta qisqa javob qaytaring. "
-                            "Masalan: Salom, Rahmat, Yordam. "
-                            "Agar aniq bo'lmasa, faqat: Aniqlanmadi deb yozing."
-                        )
-                    },
-                    {
-                        'inline_data': {
-                            'mime_type': mime_type,
-                            'data': base64_data
-                        }
-                    }
-                ]
-            }
-        ],
-        'generationConfig': {
-            'temperature': 0.2,
-            'maxOutputTokens': 20
-        }
-    }
-
-    req = urllib.request.Request(
-        gemini_url,
-        data=json.dumps(gemini_payload).encode('utf-8'),
-        headers={
-            'Content-Type': 'application/json',
-            'x-goog-api-key': gemini_api_key,
-        },
-        method='POST'
-    )
-
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            gemini_result = json.loads(resp.read().decode('utf-8'))
-
-        recognized_text = 'Aniqlanmadi'
-        candidates = gemini_result.get('candidates', [])
-
-        if candidates:
-            parts = candidates[0].get('content', {}).get('parts', [])
-            if parts and parts[0].get('text'):
-                recognized_text = parts[0]['text'].strip()
-
-        recognized_text = recognized_text.strip().strip('"').strip("'") or 'Aniqlanmadi'
+        mime_type, image_bytes = _decode_image_payload(image_data)
+        recognized_text = _translate_frame_with_gemini(image_bytes, mime_type)
 
         if current_user.is_authenticated and recognized_text and recognized_text != 'Aniqlanmadi':
             latest_entry = History.query.filter_by(user_id=current_user.id).order_by(History.created_at.desc()).first()
@@ -141,13 +153,6 @@ def recognize_sign():
         return jsonify({
             'text': recognized_text
         })
-
-    except urllib.error.HTTPError as e:
-        error_body = e.read().decode('utf-8', errors='ignore')
-        return jsonify({
-            'error': 'Gemini API xatosi.',
-            'details': error_body
-        }), e.code
 
     except Exception as e:
         return jsonify({
