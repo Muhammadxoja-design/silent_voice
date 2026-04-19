@@ -121,7 +121,7 @@ def login():
         remember = request.form.get('remember') in {'on', 'true', '1', 'yes'}
 
         if not identifier or not password:
-            flash('Login va parolni kiriting.', 'danger')
+            flash("Email yoki login hamda parolni kiriting.", 'danger')
             return render_template('auth/login.html')
 
         user = User.query.filter(

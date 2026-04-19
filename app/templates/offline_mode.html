@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="card">
-  <h1>Offline Mode</h1>
-  <p class="muted">This demo ships with a local starter pack. Extend this list to the most-used 100 signs and cache related assets using the service worker.</p>
+  <h1>Offline rejim</h1>
+  <p class="muted">Internet bo'lmaganda ham tez-tez ishlatiladigan ishoralarni shu bo'limdan ko'rish mumkin. Keyinchalik bu ro'yxat eng kerakli 100 ta ishora bilan to'ldiriladi.</p>
+
+  {% if offline_signs %}
   <div class="grid three mt-24">
     {% for sign in offline_signs %}
     <article class="card sign-card"><h3>{{ sign.title }}</h3><p>{{ sign.meaning }}</p><small>{{ sign.category }}</small></article>
     {% endfor %}
   </div>
+  {% else %}
+  <p class="muted mt-24">Hozircha offline kutubxonaga ishoralar qo'shilmagan.</p>
+  {% endif %}
 </section>
 {% endblock %}

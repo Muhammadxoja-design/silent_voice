@@ -1,8 +1,16 @@
 (function () {
   const webApp = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  const root = document.documentElement;
+
+  function applyThemeMap(themeMap) {
+    Object.entries(themeMap).forEach(([key, value]) => {
+      if (value) {
+        root.style.setProperty(key, value);
+      }
+    });
+  }
 
   function applyTelegramTheme() {
-    const root = document.documentElement;
     const params = webApp && webApp.themeParams ? webApp.themeParams : {};
     const themeMap = {
       '--tg-theme-bg-color': params.bg_color,
@@ -17,17 +25,51 @@
       '--tg-theme-destructive-text-color': params.destructive_text_color
     };
 
-    Object.entries(themeMap).forEach(([key, value]) => {
-      if (value) {
-        root.style.setProperty(key, value);
-      }
-    });
+    applyThemeMap(themeMap);
+  }
+
+  function applyUserTheme() {
+    const userTheme = window.__SV_USER_THEME__ || {};
+    const themeMap = {
+      '--tg-theme-bg-color': userTheme.bgColor,
+      '--tg-theme-secondary-bg-color': userTheme.cardColor,
+      '--tg-theme-section-bg-color': userTheme.cardColor,
+      '--tg-theme-button-color': userTheme.buttonColor,
+      '--tg-theme-link-color': userTheme.buttonColor,
+      '--tg-theme-text-color': userTheme.textColor
+    };
+
+    applyThemeMap(themeMap);
+  }
+
+  function syncBrowserThemeColor() {
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (!metaTheme) {
+      return;
+    }
+
+    const computed = window.getComputedStyle(root);
+    const color = computed.getPropertyValue('--tg-theme-button-color').trim()
+      || computed.getPropertyValue('--tg-theme-bg-color').trim();
+
+    if (color) {
+      metaTheme.setAttribute('content', color);
+    }
   }
 
   if (webApp) {
     webApp.ready();
     webApp.expand();
     applyTelegramTheme();
-    webApp.onEvent('themeChanged', applyTelegramTheme);
+    applyUserTheme();
+    syncBrowserThemeColor();
+    webApp.onEvent('themeChanged', function () {
+      applyTelegramTheme();
+      applyUserTheme();
+      syncBrowserThemeColor();
+    });
+  } else {
+    applyUserTheme();
+    syncBrowserThemeColor();
   }
 })();

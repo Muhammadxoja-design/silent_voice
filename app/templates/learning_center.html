@@ -1,12 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="section-head"><h1>Learning Center</h1></section>
+<section class="section-head">
+  <div>
+    <h1>O'rganish markazi</h1>
+    <p class="muted">Kategoriyalar bo'yicha ishoralarni ko'ring va ma'nolarini tez o'rganing.</p>
+  </div>
+</section>
+
 <div class="chips mt-16 wrap">
-  <a class="chip {% if not active_category %}active{% endif %}" href="{{ url_for('main.learning_center') }}">All</a>
+  <a class="chip {% if not active_category %}active{% endif %}" href="{{ url_for('main.learning_center') }}">Barchasi</a>
   {% for category in categories %}
   <a class="chip {% if active_category == category %}active{% endif %}" href="{{ url_for('main.learning_center', category=category) }}">{{ category }}</a>
   {% endfor %}
 </div>
+
+{% if signs %}
 <div class="grid three mt-24">
   {% for sign in signs %}
   <article class="card sign-card">
@@ -17,4 +25,9 @@
   </article>
   {% endfor %}
 </div>
+{% else %}
+<section class="card mt-24">
+  <p class="muted">Tanlangan bo'lim bo'yicha hozircha ishoralar topilmadi.</p>
+</section>
+{% endif %}
 {% endblock %}

@@ -2,41 +2,43 @@
 {% block content %}
 <section class="grid dashboard-grid">
   <div class="card stat-card">
-    <h2>Hello, {{ current_user.name or current_user.username }}</h2>
-    <p class="muted">Daily sign recommendation and live access shortcuts.</p>
+    <h2>Salom, {{ current_user.name or current_user.username }}</h2>
+    <p class="muted">Bugungi tavsiyalar, kamera va tarjima tarixiga tez kirish shu yerda.</p>
     <div class="grid three compact">
-      <div><strong>{{ current_user.sign_count }}</strong><span>Signs learned</span></div>
-      <div><strong>{{ current_user.streak_days }}</strong><span>Streak</span></div>
-      <div><strong>{{ current_user.minutes_spent }}</strong><span>Minutes</span></div>
+      <div><strong>{{ current_user.sign_count }}</strong><span>O'rganilgan ishoralar</span></div>
+      <div><strong>{{ current_user.streak_days }}</strong><span>Ketma-ket kunlar</span></div>
+      <div><strong>{{ current_user.minutes_spent }}</strong><span>Sarflangan daqiqa</span></div>
     </div>
     <div class="hero-actions mt-16">
-      <a class="btn btn-primary" href="{{ url_for('main.live_camera') }}">Open camera</a>
-      <a class="btn" href="{{ url_for('main.avatar') }}">Use avatar</a>
+      <a class="btn btn-primary" href="{{ url_for('main.live_camera') }}">Kamerani ochish</a>
+      <a class="btn" href="{{ url_for('main.avatar') }}">Avatarni ochish</a>
     </div>
   </div>
   <div class="card">
-    <h3>Sign of the day</h3>
+    <h3>Bugungi ishora</h3>
     {% if recommended %}
       <div class="feature-lesson">
         <strong>{{ recommended.title }}</strong>
         <p>{{ recommended.meaning }}</p>
         <small>{{ recommended.description }}</small>
       </div>
+    {% else %}
+      <p class="muted">Hozircha tavsiya etiladigan ishora topilmadi.</p>
     {% endif %}
   </div>
 </section>
 
 <section class="grid two mt-24">
   <div class="card">
-    <h3>Translation history</h3>
+    <h3>Tarjimalar tarixi</h3>
     {% if history_entries %}
       <div class="table-wrap">
         <table class="history-table">
           <thead>
             <tr>
               <th>#</th>
-              <th>Recognized text</th>
-              <th>Created at</th>
+              <th>Aniqlangan matn</th>
+              <th>Vaqti</th>
             </tr>
           </thead>
           <tbody>
@@ -51,11 +53,11 @@
         </table>
       </div>
     {% else %}
-      <p class="muted">No translations saved yet. Open the camera page to start building your history.</p>
+      <p class="muted">Hali saqlangan tarjimalar yo'q. Kamera bo'limini ochib tarjimani boshlang.</p>
     {% endif %}
   </div>
   <div class="card">
-    <h3>Notifications</h3>
+    <h3>Foydali eslatmalar</h3>
     <ul class="clean-list">
       {% for item in notifications %}<li>{{ item }}</li>{% endfor %}
     </ul>
@@ -64,16 +66,16 @@
 
 <section class="grid two mt-24">
   <div class="card">
-    <h3>Quick feedback</h3>
+    <h3>Tezkor fikr yuborish</h3>
     <form method="post" action="{{ url_for('main.feedback') }}" class="form-grid">
-      <textarea name="message" rows="4" placeholder="Write your suggestion or issue..."></textarea>
-      <button class="btn btn-primary">Send feedback</button>
+      <textarea name="message" rows="4" placeholder="Taklif, xato yoki qulaylik bo'yicha fikringizni yozing..."></textarea>
+      <button class="btn btn-primary">Fikr yuborish</button>
     </form>
   </div>
 </section>
 
 <section class="mt-24">
-  <div class="section-head"><h2>Popular signs</h2></div>
+  <div class="section-head"><h2>Ommabop ishoralar</h2></div>
   <div class="grid three">
     {% for sign in signs %}
       <article class="card sign-card"><h3>{{ sign.title }}</h3><p>{{ sign.meaning }}</p><small>{{ sign.category }}</small></article>

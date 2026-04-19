@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="uz">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,8 +10,30 @@
   <link rel="icon" type="image/svg+xml" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192.svg') }}">
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.svg') }}">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='twa3') }}">
-  <script defer src="{{ url_for('static', filename='js/app.js', v='twa3') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='twa4') }}">
+  {% if current_user.is_authenticated %}
+  <style>
+    :root {
+      {% if current_user.theme_bg_color %}--tg-theme-bg-color: {{ current_user.theme_bg_color }};{% endif %}
+      {% if current_user.theme_card_color %}--tg-theme-secondary-bg-color: {{ current_user.theme_card_color }}; --tg-theme-section-bg-color: {{ current_user.theme_card_color }};{% endif %}
+      {% if current_user.theme_button_color %}--tg-theme-button-color: {{ current_user.theme_button_color }}; --tg-theme-link-color: {{ current_user.theme_button_color }};{% endif %}
+      {% if current_user.theme_text_color %}--tg-theme-text-color: {{ current_user.theme_text_color }};{% endif %}
+    }
+  </style>
+  <script>
+    window.__SV_USER_THEME__ = {
+      bgColor: {{ (current_user.theme_bg_color or '')|tojson }},
+      cardColor: {{ (current_user.theme_card_color or '')|tojson }},
+      buttonColor: {{ (current_user.theme_button_color or '')|tojson }},
+      textColor: {{ (current_user.theme_text_color or '')|tojson }}
+    };
+  </script>
+  {% else %}
+  <script>
+    window.__SV_USER_THEME__ = {};
+  </script>
+  {% endif %}
+  <script defer src="{{ url_for('static', filename='js/app.js', v='twa4') }}"></script>
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -20,15 +42,15 @@
       <a class="brand" href="{{ url_for('main.index') }}">Silent Voice</a>
       <nav class="nav">
         {% if current_user.is_authenticated %}
-          <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
-          <a href="{{ url_for('main.learning_center') }}">Learning</a>
-          <a href="{{ url_for('main.live_camera') }}">Camera</a>
-          <a href="{{ url_for('main.profile') }}">Profile</a>
+          <a href="{{ url_for('main.dashboard') }}">Panel</a>
+          <a href="{{ url_for('main.learning_center') }}">O'rganish</a>
+          <a href="{{ url_for('main.live_camera') }}">Kamera</a>
+          <a href="{{ url_for('main.profile') }}">Profil</a>
           {% if current_user.is_admin %}<a href="{{ url_for('admin.dashboard') }}">Admin</a>{% endif %}
-          <a href="{{ url_for('auth.logout') }}">Logout</a>
+          <a href="{{ url_for('auth.logout') }}">Chiqish</a>
         {% else %}
-          <a href="{{ url_for('auth.login') }}">Login</a>
-          <a href="{{ url_for('auth.register') }}" class="btn btn-primary small">Get started</a>
+          <a href="{{ url_for('auth.login') }}">Kirish</a>
+          <a href="{{ url_for('auth.register') }}" class="btn btn-primary small">Boshlash</a>
         {% endif %}
       </nav>
     </div>
@@ -49,8 +71,8 @@
 
   <footer class="site-footer">
     <div class="container footer-grid">
-      <p>Demo product for accessible sign communication.</p>
-      <p>TWA-ready · PWA-ready · Flask + SQLite</p>
+      <p>Imo-ishora va matn orasidagi aloqa uchun qulay platforma.</p>
+      <p>Telegram Web App, PWA va Flask asosida ishlaydi.</p>
     </div>
   </footer>
 

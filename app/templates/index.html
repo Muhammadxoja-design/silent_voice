@@ -2,12 +2,12 @@
 {% block content %}
 <section class="hero card hero-grid">
   <div>
-    <span class="pill">AI Sign Language Demo</span>
-    <h1>Bridge gesture, text, and voice in one mobile-first product.</h1>
-    <p class="muted">Silent Voice is a demo platform for deaf and hard-of-hearing accessibility with live camera recognition, learning center, sign playback avatar, offline library, and admin analytics.</p>
+    <span class="pill">AI ishora tarjimoni</span>
+    <h1>Imo-ishora, matn va ovozni bitta qulay platformada birlashtiring.</h1>
+    <p class="muted">Silent Voice foydalanuvchiga kamera orqali ishorani tarjima qilish, o'rganish markazi, avatar va offline kutubxonadan foydalanish imkonini beradi.</p>
     <div class="hero-actions">
-      <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Create account</a>
-      <a href="{{ url_for('auth.login') }}" class="btn">Login</a>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Ro'yxatdan o'tish</a>
+      <a href="{{ url_for('auth.login') }}" class="btn">Kirish</a>
     </div>
   </div>
   <div class="mock-phone">
@@ -30,7 +30,7 @@
         {% if current_user.is_authenticated %}
         <a href="{{ url_for('main.live_camera') }}" class="btn small">Katta kamera sahifasi</a>
         {% else %}
-        <a href="{{ url_for('auth.login') }}" class="btn small">Login qilib ochish</a>
+        <a href="{{ url_for('auth.login') }}" class="btn small">Kirish qilib ochish</a>
         {% endif %}
       </div>
       <div class="hero-transcript-box">
@@ -49,13 +49,13 @@
 </section>
 
 <section class="grid three mt-24">
-  <article class="card"><h3>Real-time translator</h3><p class="muted">Demo live camera page with MediaPipe-ready gesture mapping and text-to-speech output.</p></article>
-  <article class="card"><h3>Learning center</h3><p class="muted">Structured sign library with categories like alphabet, medical, shop, and emergency.</p></article>
-  <article class="card"><h3>Admin operations</h3><p class="muted">User moderation, feedback review, sign management, and simple KPI monitoring.</p></article>
+  <article class="card"><h3>Jonli tarjima</h3><p class="muted">Kamera foydalanuvchi ko'rsatgan ishorani AI yordamida tezda matnga aylantiradi.</p></article>
+  <article class="card"><h3>O'rganish markazi</h3><p class="muted">Alifbo, tibbiyot, do'kon va kundalik muloqot bo'yicha ishoralar bir joyda jamlangan.</p></article>
+  <article class="card"><h3>Boshqaruv</h3><p class="muted">Fikr-mulohaza, foydalanuvchi faolligi va ishoralar bo'yicha ma'lumotlarni ko'rish mumkin.</p></article>
 </section>
 
 <section class="mt-24">
-  <div class="section-head"><h2>Featured demo signs</h2></div>
+  <div class="section-head"><h2>Tavsiya etilgan ishoralar</h2></div>
   <div class="grid two">
     {% for sign in featured %}
     <article class="card sign-card"><h3>{{ sign.title }}</h3><p>{{ sign.meaning }}</p><small>{{ sign.category }}</small></article>

@@ -42,6 +42,18 @@ def _ensure_user_schema():
         if 'created_at' not in columns:
             connection.execute(text('ALTER TABLE user ADD COLUMN created_at DATETIME'))
 
+        if 'theme_bg_color' not in columns:
+            connection.execute(text('ALTER TABLE user ADD COLUMN theme_bg_color VARCHAR(7)'))
+
+        if 'theme_card_color' not in columns:
+            connection.execute(text('ALTER TABLE user ADD COLUMN theme_card_color VARCHAR(7)'))
+
+        if 'theme_button_color' not in columns:
+            connection.execute(text('ALTER TABLE user ADD COLUMN theme_button_color VARCHAR(7)'))
+
+        if 'theme_text_color' not in columns:
+            connection.execute(text('ALTER TABLE user ADD COLUMN theme_text_color VARCHAR(7)'))
+
         existing_columns = {column['name'] for column in inspect(db.engine).get_columns('user')}
         seed_column = 'email' if 'email' in existing_columns else 'name' if 'name' in existing_columns else None
 

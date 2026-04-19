@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="auth-shell card narrow">
-  <h1>Welcome back</h1>
-  <p class="muted">Email login is enabled in the demo. Google/social buttons are UI placeholders for later OAuth integration.</p>
+  <h1>Qaytganingizdan xursandmiz</h1>
+  <p class="muted">Email yoki login orqali tizimga kiring. Keyinchalik Google va boshqa usullar ham qo'shilishi mumkin.</p>
   <form method="post" class="form-grid">
-    <input name="email" type="email" placeholder="Email" required>
-    <input name="password" type="password" placeholder="Password" required>
-    <button class="btn btn-primary" type="submit">Login</button>
+    <input name="email" type="text" placeholder="Email yoki login" required>
+    <input name="password" type="password" placeholder="Parol" required>
+    <button class="btn btn-primary" type="submit">Kirish</button>
   </form>
   <div class="oauth-grid mt-16">
-    <button class="btn" disabled>Google (next step)</button>
-    <button class="btn" disabled>Social login (next step)</button>
+    <button class="btn" disabled>Google tez orada</button>
+    <button class="btn" disabled>Boshqa kirish usullari tez orada</button>
   </div>
 </section>
 {% endblock %}

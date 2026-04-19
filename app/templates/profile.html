@@ -1,16 +1,131 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="card narrow">
-  <h1>Profile settings</h1>
+  <h1>Profil sozlamalari</h1>
+  <p class="muted settings-copy">Ism, til va interfeys ranglarini o'zingizga qulay qilib tanlang.</p>
+
   <form method="post" class="form-grid">
-    <input name="name" value="{{ current_user.name }}" required>
-    <select name="language">
-      <option value="UZB" {% if current_user.language == 'UZB' %}selected{% endif %}>UZB</option>
-      <option value="ENG" {% if current_user.language == 'ENG' %}selected{% endif %}>ENG</option>
-      <option value="RUS" {% if current_user.language == 'RUS' %}selected{% endif %}>RUS</option>
-    </select>
-    <input name="password" type="password" placeholder="New password (optional)">
-    <button class="btn btn-primary">Save changes</button>
+    <label class="field-inline" for="name">
+      <span>Ism</span>
+      <input id="name" name="name" value="{{ current_user.name or '' }}" required>
+    </label>
+
+    <label class="field-inline" for="language">
+      <span>Til</span>
+      <select id="language" name="language">
+        <option value="UZB" {% if current_user.language == 'UZB' %}selected{% endif %}>O'zbekcha</option>
+        <option value="ENG" {% if current_user.language == 'ENG' %}selected{% endif %}>English</option>
+        <option value="RUS" {% if current_user.language == 'RUS' %}selected{% endif %}>Russkiy</option>
+      </select>
+    </label>
+
+    <label class="field-inline" for="password">
+      <span>Yangi parol</span>
+      <input id="password" name="password" type="password" placeholder="Ixtiyoriy, kamida 8 ta belgi">
+    </label>
+
+    <section class="theme-settings">
+      <div class="section-head">
+        <h3>Interfeys ranglari</h3>
+      </div>
+      <p class="muted">Sayt ranglarini foydalanuvchining o'zi tanlashi uchun shu bo'lim qo'shildi.</p>
+
+      <div class="theme-grid">
+        <label class="color-field" for="themeBgColor">
+          <span>Asosiy fon</span>
+          <input
+            id="themeBgColor"
+            class="color-input"
+            name="theme_bg_color"
+            type="color"
+            value="{{ current_user.theme_bg_color or '#0f172a' }}"
+          >
+        </label>
+
+        <label class="color-field" for="themeCardColor">
+          <span>Karta foni</span>
+          <input
+            id="themeCardColor"
+            class="color-input"
+            name="theme_card_color"
+            type="color"
+            value="{{ current_user.theme_card_color or '#111827' }}"
+          >
+        </label>
+
+        <label class="color-field" for="themeButtonColor">
+          <span>Tugma rangi</span>
+          <input
+            id="themeButtonColor"
+            class="color-input"
+            name="theme_button_color"
+            type="color"
+            value="{{ current_user.theme_button_color or '#2563eb' }}"
+          >
+        </label>
+
+        <label class="color-field" for="themeTextColor">
+          <span>Matn rangi</span>
+          <input
+            id="themeTextColor"
+            class="color-input"
+            name="theme_text_color"
+            type="color"
+            value="{{ current_user.theme_text_color or '#e5eefc' }}"
+          >
+        </label>
+      </div>
+
+      <div
+        id="themePreview"
+        class="theme-preview"
+        style="
+          --preview-bg: {{ current_user.theme_bg_color or '#0f172a' }};
+          --preview-card: {{ current_user.theme_card_color or '#111827' }};
+          --preview-button: {{ current_user.theme_button_color or '#2563eb' }};
+          --preview-text: {{ current_user.theme_text_color or '#e5eefc' }};
+        "
+      >
+        <span class="theme-preview-badge">Jonli ko'rinish</span>
+        <div class="theme-preview-card">
+          <strong>AI tarjima oynasi</strong>
+          <p>Foydalanuvchi ishora qilganda, natija shu uslubda ekranda ko'rinadi.</p>
+        </div>
+        <span class="theme-preview-action">Namunaviy tugma</span>
+      </div>
+    </section>
+
+    <div class="hero-actions">
+      <button class="btn btn-primary" type="submit">Saqlash</button>
+      <button class="btn" type="submit" name="reset_theme" value="1">Standart ranglarga qaytarish</button>
+    </div>
   </form>
 </section>
+
+<script>
+  (function () {
+    const preview = document.getElementById('themePreview');
+    const bgInput = document.getElementById('themeBgColor');
+    const cardInput = document.getElementById('themeCardColor');
+    const buttonInput = document.getElementById('themeButtonColor');
+    const textInput = document.getElementById('themeTextColor');
+
+    if (!preview || !bgInput || !cardInput || !buttonInput || !textInput) {
+      return;
+    }
+
+    function updatePreview() {
+      preview.style.setProperty('--preview-bg', bgInput.value);
+      preview.style.setProperty('--preview-card', cardInput.value);
+      preview.style.setProperty('--preview-button', buttonInput.value);
+      preview.style.setProperty('--preview-text', textInput.value);
+    }
+
+    [bgInput, cardInput, buttonInput, textInput].forEach((input) => {
+      input.addEventListener('input', updatePreview);
+    });
+
+    updatePreview();
+  })();
+</script>
 {% endblock %}

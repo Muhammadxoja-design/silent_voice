@@ -1,17 +1,18 @@
 {% extends 'base.html' %}
 {% block content %}
 <section class="auth-shell card narrow">
-  <h1>Create your account</h1>
+  <h1>Yangi akkaunt yarating</h1>
+  <p class="muted">Bir necha maydonni to'ldiring va darhol tarjima hamda o'rganish bo'limlaridan foydalaning.</p>
   <form method="post" class="form-grid">
-    <input name="name" placeholder="Full name" required>
+    <input name="name" placeholder="To'liq ism" required>
     <input name="email" type="email" placeholder="Email" required>
     <select name="language">
-      <option value="UZB">UZB</option>
-      <option value="ENG">ENG</option>
-      <option value="RUS">RUS</option>
+      <option value="UZB">O'zbekcha</option>
+      <option value="ENG">English</option>
+      <option value="RUS">Russkiy</option>
     </select>
-    <input name="password" type="password" placeholder="Password" required>
-    <button class="btn btn-primary" type="submit">Register</button>
+    <input name="password" type="password" placeholder="Parol" required>
+    <button class="btn btn-primary" type="submit">Ro'yxatdan o'tish</button>
   </form>
 </section>
 {% endblock %}
