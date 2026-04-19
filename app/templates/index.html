@@ -11,11 +11,38 @@
     </div>
   </div>
   <div class="mock-phone">
-    <div class="phone-screen">
-      <div class="camera-placeholder">📷 Live Camera</div>
-      <div class="result-box">Recognized: <strong>Hello</strong></div>
+    <div class="phone-screen hero-live-preview" data-translator-endpoint="{{ url_for('api.recognize_sign') }}">
+      <div class="hero-camera-shell">
+        <video id="homeCamera" class="camera-box hero-preview-video hidden" autoplay playsinline muted></video>
+        <div id="homeCameraPlaceholder" class="camera-placeholder hero-preview-placeholder">
+          <strong>AI Live Camera</strong>
+          <p>Foydalanuvchi ishora qilganda, AI uning ma'nosini shu yerning o'zida tarjima qiladi.</p>
+        </div>
+        <canvas id="homeCameraCanvas" class="hidden"></canvas>
+      </div>
+      <div class="result-box hero-result-box" aria-live="polite">
+        <span class="result-label">AI tarjima</span>
+        <strong id="homeRecognizedText">Kamerani yoqing va imo-ishora qiling</strong>
+        <small id="homeRecognitionStatus" class="result-status">Preview rejimi tayyor</small>
+      </div>
+      <div class="hero-actions hero-phone-actions">
+        <button id="homeCameraToggleBtn" class="btn btn-primary small" type="button">Kamerani yoqish</button>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('main.live_camera') }}" class="btn small">Katta kamera sahifasi</a>
+        {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn small">Login qilib ochish</a>
+        {% endif %}
+      </div>
+      <div class="hero-transcript-box">
+        <span class="result-label">So'nggi tarjimalar</span>
+        <div id="homeTranscript" class="chips">
+          <span class="chip">AI tayyor</span>
+        </div>
+      </div>
       <div class="chips">
-        <span>Avatar</span><span>Offline</span><span>SOS</span>
+        <span class="chip">Live AI</span>
+        <span class="chip">Sign to text</span>
+        <span class="chip">Realtime preview</span>
       </div>
     </div>
   </div>
@@ -35,4 +62,5 @@
     {% endfor %}
   </div>
 </section>
+<script src="{{ url_for('static', filename='js/home_live_preview.js', v='cam-home-1') }}"></script>
 {% endblock %}
